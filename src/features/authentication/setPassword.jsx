@@ -59,6 +59,16 @@ const SetPassword = () => {
             });
     }
     const handleSubmit = async () => {
+        // Check if password fields are filled
+        if (!password || !confirmPassword) {
+            Toast.fire({
+                icon: "error",
+                title: "Please Enter Valid Password",
+            });
+            return;
+        }
+    
+        // Check if the passwords match
         if (password !== confirmPassword) {
             Toast.fire({
                 icon: "error",
@@ -66,23 +76,33 @@ const SetPassword = () => {
             });
             return;
         }
-
+    
+        // Check if userDetails exists and has web_user_id
+        const webUserId = userDetails?.web_user_id || userId;
+    
+        if (!webUserId) {
+            Toast.fire({
+                icon: "error",
+                title: "User details not found",
+            });
+            return;
+        }
+    
         const payload = {
-            user_id: userId || userDetails?.web_user_id,
+            user_id: webUserId,
             password: password,
             confirm_password: confirmPassword,
         };
-
+    
         try {
             const res = await updatePassword(payload);
-
+    
             if (res.data.status === "success") {
                 Toast.fire({
                     icon: "success",
                     title: res.data.message,
                 });
-                // navigate(routePath.HOME);
-                loginApi()
+                loginApi(); // Call the login API if successful
             } else {
                 Toast.fire({
                     icon: "error",
@@ -97,6 +117,7 @@ const SetPassword = () => {
             console.error("Failed to verify OTP:", error);
         }
     };
+    
 
 
 
