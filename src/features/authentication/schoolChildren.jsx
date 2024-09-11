@@ -78,11 +78,19 @@ const SchoolChildren = () => {
 
             const res = await updateAddressDetail(payload);
             console.log(res.data, "datass")
-            if (res.data.status === "success") {    
+            if (res.data.status === "success") { 
+                Toast.fire({
+                    icon: "success",
+                    title: res.data.message,
+                  });   
                 loginApi()
                 // navigate(routePath.LOGIN);
             } else {
                 console.error("API call failed:", res.data.message);
+                Toast.fire({
+                    icon: "error",
+                    title: res.data.message,
+                  });
             }
         } catch (error) {
             console.error("Failed to update address details:", error);
