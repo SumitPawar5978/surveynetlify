@@ -98,11 +98,11 @@ const TestRequest = () => {
                     }}>
                         <Box sx={{ padding: "10px", }}>
                             <Box sx={{ display: "flex" }}>
-                                <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "rgba(34, 34, 34, 0.8)" }}>Survey Title :</Typography>
+                                <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "rgba(34, 34, 34, 0.8)" }}>Test Title :</Typography>
                                 <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "#F84D01", pl:'3px' }}>{requestEntries?.testDetail?.test_title}</Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>
-                                <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "rgba(34, 34, 34, 0.8)" }}>Survey Code :</Typography>
+                                <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "rgba(34, 34, 34, 0.8)" }}>Test Code :</Typography>
                                 <Typography variant="h6" sx={{ fontSize: "16px", fontWeight: "400", color: "#F84D01", pl:'3px' }}>{requestEntries?.testDetail?.test_code}</Typography>
                             </Box>
                             <Box sx={{ display: "flex" }}>

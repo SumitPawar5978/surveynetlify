@@ -81,7 +81,7 @@ const StartSurvey = () => {
                         pl: "3px",
                       }}
                     >
-                      {item.test_title}
+                      {item.survey_title}
                     </Typography>
                   </Box>
                   <Box sx={{ display: "flex" }}>
