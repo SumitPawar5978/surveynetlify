@@ -46,34 +46,90 @@ const Registration = () => {
 
   const validate = () => {
     let tempErrors = {};
+    let isValid = true;
   
-    if (!formData.firstName) tempErrors.firstName = 'First name is required.';
-    
+    // Validate required fields
+    if (!formData.firstName) {
+      tempErrors.firstName = 'First name is required.';
+      isValid = false;
+    }
+  
+    if (!formData.middleName) {
+      tempErrors.middleName = 'Middle name is required.';
+      isValid = false;
+    }
+  
+    if (!formData.lastName) {
+      tempErrors.lastName = 'Last name is required.';
+      isValid = false;
+    }
+  
     if (!formData.email) {
       tempErrors.email = 'Email is required.';
+      isValid = false;
     } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
       tempErrors.email = 'Enter a valid email address.';
+      isValid = false;
     }
   
     if (!formData.mobileNumber) {
       tempErrors.mobileNumber = 'Mobile number is required.';
+      isValid = false;
     } else if (!/^\d{10}$/.test(formData.mobileNumber)) {
       tempErrors.mobileNumber = 'Enter a valid 10-digit mobile number.';
+      isValid = false;
     }
   
     if (!formData.password) {
       tempErrors.password = 'Password is required.';
+      isValid = false;
     } else if (formData.password.length < 6) {
       tempErrors.password = 'Password must be at least 6 characters long.';
+      isValid = false;
     }
   
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.confirmPassword) {
+      tempErrors.confirmPassword = 'Confirm Password is required.';
+      isValid = false;
+    } else if (formData.password !== formData.confirmPassword) {
       tempErrors.confirmPassword = 'Passwords do not match.';
+      isValid = false;
+    }
+  
+    // Capitalization validation for first, middle, and last names
+    if (formData.firstName && formData.firstName[0] !== formData.firstName[0].toUpperCase()) {
+      tempErrors.firstName = 'First letter of First Name should be capitalized.';
+      isValid = false;
+    }
+  
+    if (formData.middleName && formData.middleName[0] !== formData.middleName[0].toUpperCase()) {
+      tempErrors.middleName = 'First letter of Middle Name should be capitalized.';
+      isValid = false;
+    }
+  
+    if (formData.lastName && formData.lastName[0] !== formData.lastName[0].toUpperCase()) {
+      tempErrors.lastName = 'First letter of Last Name should be capitalized.';
+      isValid = false;
     }
   
     setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
+  
+    if (!isValid) {
+      if (Object.keys(tempErrors).length > 0) {
+        Toast.fire({
+          icon: "error",
+          title: Object.values(tempErrors).join(' '),
+        });
+      }
+    }
+  
+    return isValid;
   };
+  
+  
+  
+  
+  
   
 
   const Toast = Swal.mixin({
@@ -89,24 +145,24 @@ const Registration = () => {
   });
 
   const handleSubmit = async () => {
-    if (validate()) {
+    if (validate()) { // Call the updated validate function
       try {
-        const res = await sendOtp({         
+        const res = await sendOtp({
           email_id: formData.email,
           mobile_no: formData.mobileNumber,
         });
-        localStorage.setItem("registrationEMail", formData.email)
-        localStorage.setItem("registrationPassword", formData.password)
+  
+        localStorage.setItem("registrationEMail", formData.email);
+        localStorage.setItem("registrationPassword", formData.password);
         console.log("OTP verification response:", res.data);
-
+  
         if (res.data.status === "success") {
           dispatch(setRegistrationData(formData));
-          dispatch(setIsRegistration(true))
+          dispatch(setIsRegistration(true));
           Toast.fire({
             icon: "success",
             title: res.data.message,
           });
-          console.log(res.data.message, "responses")
           navigate(routePath.OTP);
         } else {
           Toast.fire({
@@ -116,9 +172,15 @@ const Registration = () => {
         }
       } catch (error) {
         console.error("Failed to verify OTP:", error);
+        Toast.fire({
+          icon: "error",
+          title: "Failed to send OTP. Please try again.",
+        });
       }
-    }
+    } // No need for else here, validate handles error messaging
   };
+  
+  
 
   return (
     <Box sx={{ backgroundColor: "accent.main", height: "100%", padding: "35px" }}>

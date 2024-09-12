@@ -84,6 +84,9 @@ const Navbar = () => {
               <Box
                 component="img"
                 src={BackIcon}
+                onClick={() => {
+                  navigate(-1)
+                }}
                 alt="Logo"
                 sx={{ height: 22, width: 22, mr: "15px" }}
               />

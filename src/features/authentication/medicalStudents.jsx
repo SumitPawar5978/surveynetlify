@@ -77,73 +77,152 @@ const MedicalStudents = () => {
   const [medicalSpecialties, setMedicalSpecialties] = useState([]);
   const [collegeList, setCollegeList] = useState([]);
 
+  // const handleInputChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  
+    // Reset fields related to state when the state changes
+    if (name === 'state') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        district: '', // Reset district
+        city: '', // Reset city
+        college: '', // Reset college
+        medicalSpecialty: '' // Reset medical specialty
+      }));
+      setDistricts([]);
+      setCities([]);
+      setCollegeList([]);
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
+  
 
   const handleDropdownToggle = (name, isOpen) => {
     setDropdownOpen((prev) => ({ ...prev, [name]: isOpen }));
   };
 
+  // useEffect(() => {
+  //   const fetchStates = async () => {
+  //     try {
+  //       let res = await getState();
+  //       setStates(res.data.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch states:", error);
+  //     }
+  //   };
+  
+  //   const fetchDistricts = async () => {
+  //     if (!formData.state) return;
+  //     try {
+  //       let res = await getDistrict(formData.state);
+  //       setDistricts(res.data.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch districts:", error);
+  //     }
+  //   };
+  
+  //   const fetchCities = async () => {
+  //     if (!formData.district) return;
+  //     try {
+  //       let res = await getCity(formData.district);
+  //       setCities(res.data.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch cities:", error);
+  //     }
+  //   };
+  
+  //   const fetchMedicalSpeciality = async () => {
+  //     try {
+  //       let res = await getMedicalSpeciality();
+  //       setMedicalSpecialties(res.data.data);
+  
+  //       // Call fetchCollegeList after fetching medical specialties
+  //       fetchCollegeList();
+  //     } catch (error) {
+  //       console.error("Failed to fetch medical specialties:", error);
+  //     }
+  //   };
+  
+  //   const fetchCollegeList = async () => {
+  //     if (!formData.city || !formData.medicalSpecialty) return;
+  //     try {
+  //       let res = await getCollegeList(formData.city, formData.medicalSpecialty);
+  //       setCollegeList(res.data.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch colleges:", error);
+  //     }
+  //   };
+  
+  //   fetchStates();
+  //   fetchDistricts();
+  //   fetchCities();
+  //   fetchMedicalSpeciality();
+  
+  // }, [formData.state, formData.district, formData.city, formData.medicalSpecialty]);
+
   useEffect(() => {
-    const fetchStates = async () => {
-      try {
-        let res = await getState();
-        setStates(res.data.data);
-      } catch (error) {
-        console.error("Failed to fetch states:", error);
-      }
-    };
-  
-    const fetchDistricts = async () => {
-      if (!formData.state) return;
-      try {
-        let res = await getDistrict(formData.state);
-        setDistricts(res.data.data);
-      } catch (error) {
-        console.error("Failed to fetch districts:", error);
-      }
-    };
-  
-    const fetchCities = async () => {
-      if (!formData.district) return;
-      try {
-        let res = await getCity(formData.district);
-        setCities(res.data.data);
-      } catch (error) {
-        console.error("Failed to fetch cities:", error);
-      }
-    };
-  
-    const fetchMedicalSpeciality = async () => {
-      try {
-        let res = await getMedicalSpeciality();
-        setMedicalSpecialties(res.data.data);
-  
-        // Call fetchCollegeList after fetching medical specialties
-        fetchCollegeList();
-      } catch (error) {
-        console.error("Failed to fetch medical specialties:", error);
-      }
-    };
-  
-    const fetchCollegeList = async () => {
-      if (!formData.city || !formData.medicalSpecialty) return;
-      try {
-        let res = await getCollegeList(formData.city, formData.medicalSpecialty);
-        setCollegeList(res.data.data);
-      } catch (error) {
-        console.error("Failed to fetch colleges:", error);
-      }
-    };
-  
-    fetchStates();
-    fetchDistricts();
-    fetchCities();
-    fetchMedicalSpeciality();
-  
-  }, [formData.state, formData.district, formData.city, formData.medicalSpecialty]);
+  const fetchStates = async () => {
+    try {
+      let res = await getState();
+      setStates(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch states:", error);
+    }
+  };
+
+  const fetchDistricts = async () => {
+    if (!formData.state) return;
+    try {
+      let res = await getDistrict(formData.state);
+      setDistricts(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch districts:", error);
+    }
+  };
+
+  const fetchCities = async () => {
+    if (!formData.district) return;
+    try {
+      let res = await getCity(formData.district);
+      setCities(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch cities:", error);
+    }
+  };
+
+  const fetchMedicalSpeciality = async () => {
+    try {
+      let res = await getMedicalSpeciality();
+      setMedicalSpecialties(res.data.data);
+      fetchCollegeList();
+    } catch (error) {
+      console.error("Failed to fetch medical specialties:", error);
+    }
+  };
+
+  const fetchCollegeList = async () => {
+    if (!formData.city || !formData.medicalSpecialty) return;
+    try {
+      let res = await getCollegeList(formData.city, formData.medicalSpecialty);
+      setCollegeList(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch colleges:", error);
+    }
+  };
+
+  fetchStates();
+  fetchDistricts();
+  fetchCities();
+  fetchMedicalSpeciality();
+
+}, [formData.state, formData.district, formData.city, formData.medicalSpecialty]);
+
   
 
   const loginApi = async () => {
@@ -177,52 +256,59 @@ const MedicalStudents = () => {
             });
         });
 }
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    let data = {
-      user_id: userId,
-      user_type: "Medical Students",
-      country_id: selectedTab === "tabIndia" ? 1 : 2,
-    };
+  // Check if user selected "Other" and did not choose a medical specialty
+  if (selectedTab === "tabOther" && !formData.medicalSpecialty) {
+    Toast.fire({
+      icon: "error",
+      title: "Please select a medical speciality",
+    });
+    return; // Prevent submission if medical specialty is not selected
+  }
 
-    if (data.country_id === 2) {
-      data = {
-        ...data,
-        other_city_name: formData.city,
-        other_college_name: formData.college
-      };
-    } else {
-      data = {
-        ...data,
-        state_id: formData.state,
-        district_id: formData.district,
-        city_id: formData.city,
-        medical_speciality_id: formData.medicalSpecialty,
-        college_id: formData.college,
-      };
-    }
-
-    try {
-      const res = await updateAddressDetail(data);
-      if (res.data.status === "success") {
-        Toast.fire({
-          icon: "success",
-          title: res.data.message,
-        });
-        loginApi()
-        // navigate(routePath.HOME);
-      } else {
-        Toast.fire({
-          icon: "error",
-          title: res.data.message,
-        });
-      }
-    } catch (error) {
-      // Handle error
-      console.error("Failed to submit form:", error);
-    }
+  let data = {
+    user_id: userId,
+    user_type: "Medical Students",
+    country_id: selectedTab === "tabIndia" ? 1 : 2,
   };
+
+  if (data.country_id === 2) {
+    data = {
+      ...data,
+      other_city_name: formData.city,
+      other_college_name: formData.college
+    };
+  } else {
+    data = {
+      ...data,
+      state_id: formData.state,
+      district_id: formData.district,
+      city_id: formData.city,
+      medical_speciality_id: formData.medicalSpecialty,
+      college_id: formData.college,
+    };
+  }
+
+  try {
+    const res = await updateAddressDetail(data);
+    if (res.data.status === "success") {
+      Toast.fire({
+        icon: "success",
+        title: res.data.message,
+      });
+      loginApi();
+    } else {
+      Toast.fire({
+        icon: "error",
+        title: res.data.message,
+      });
+    }
+  } catch (error) {
+    console.error("Failed to submit form:", error);
+  }
+};
 
   return (
     <Box sx={{ backgroundColor: "#E5F9FF", height: "100%", padding: "35px" }}>

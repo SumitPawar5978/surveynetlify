@@ -27,54 +27,63 @@ const OTP = () => {
         },
       });
 
-    const handleSubmit = async () => {
-        try {
-            const payload = {
-                first_name: formData.firstName,
-                middle_name: formData.middleName,
-                last_name: formData.lastName,
-                email_id: formData.email,
-                mobile_no: formData.mobileNumber,
-                otp: otp, 
-                password: formData.password,
-                confirm_password: formData.confirmPassword,
-                user_type: formData.userType
-            };
-    
-            const res = await verifyOTP(payload);
-    
-            console.log("OTP verification response:", res.data.user_id);
-    
-            if (res.data.status === "success") {
-                Toast.fire({
-                    icon: "success",
-                    title: res.data.message,
-                  });
-                dispatch(setUserId(res.data.user_id)); 
-                switch (formData.userType) {
-                    case "School / Children":
-                        navigate(routePath.SCHOOLSTUDENT);
-                        break;
-                    case "Medical Students":
-                        navigate(routePath.MEDICALSTUDENT);
-                        break;
-                    case "Other":
-                        navigate(routePath.LOGIN);
-                        break;
-                    default:
-                        console.error("Unknown user type.");
-                        break;
-                }
-            } else {
-                Toast.fire({
-                    icon: "error",
-                    title: res.data.message,
-                  });
+ const handleSubmit = async () => {
+    if (!otp) {
+        Toast.fire({
+            icon: "error",
+            title: "Please enter the OTP",
+        });
+        return;
+    }
+
+    try {
+        const payload = {
+            first_name: formData.firstName,
+            middle_name: formData.middleName,
+            last_name: formData.lastName,
+            email_id: formData.email,
+            mobile_no: formData.mobileNumber,
+            otp: otp, 
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+            user_type: formData.userType
+        };
+
+        const res = await verifyOTP(payload);
+
+        console.log("OTP verification response:", res.data.user_id);
+
+        if (res.data.status === "success") {
+            Toast.fire({
+                icon: "success",
+                title: res.data.message,
+            });
+            dispatch(setUserId(res.data.user_id)); 
+            switch (formData.userType) {
+                case "School / Children":
+                    navigate(routePath.SCHOOLSTUDENT);
+                    break;
+                case "Medical Students":
+                    navigate(routePath.MEDICALSTUDENT);
+                    break;
+                case "Other":
+                    navigate(routePath.LOGIN);
+                    break;
+                default:
+                    console.error("Unknown user type.");
+                    break;
             }
-        } catch (error) {
-            console.error("Failed to verify OTP:", error);
+        } else {
+            Toast.fire({
+                icon: "error",
+                title: res.data.message,
+            });
         }
-    };
+    } catch (error) {
+        console.error("Failed to verify OTP:", error);
+    }
+};
+
     
     return (
         <>
