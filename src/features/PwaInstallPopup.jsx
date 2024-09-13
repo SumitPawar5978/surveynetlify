@@ -3,14 +3,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
 
 const PwaInstallPopup = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallButton, setShowInstallButton] = useState(false); // Show install button
-  const [openPopup, setOpenPopup] = useState(false); // Show custom popup
+  const [showPopup, setShowPopup] = useState(false); // Show custom popup
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
-      setDeferredPrompt(e);
-      setShowInstallButton(true); // Show the button to install the app
+      console.log('beforeinstallprompt event fired');
+      setDeferredPrompt(e); // Save the event for later
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -21,7 +20,12 @@ const PwaInstallPopup = () => {
   }, []);
 
   const handleInstallClick = () => {
-    setOpenPopup(true); // Show the custom popup when button is clicked
+    if (deferredPrompt) {
+      console.log('Showing custom popup');
+      setShowPopup(true); // Show the custom popup when the button is clicked
+    } else {
+      console.log('Deferred prompt is not available');
+    }
   };
 
   const handleConfirmInstall = () => {
@@ -33,33 +37,34 @@ const PwaInstallPopup = () => {
         } else {
           console.log('User dismissed the A2HS prompt');
         }
-        setDeferredPrompt(null);
+        setDeferredPrompt(null); // Clear the prompt after use
+        setShowPopup(false); // Close the custom popup
+      }).catch(error => {
+        console.error('Error handling deferred prompt:', error);
       });
-      setOpenPopup(false); // Close the custom popup after install
-      setShowInstallButton(false); // Hide install button after installation
+    } else {
+      console.log('Deferred prompt is null'); // Debug log
     }
   };
 
   const handleClosePopup = () => {
-    setOpenPopup(false); // Close custom popup without installing
+    setShowPopup(false); // Close custom popup without installing
   };
 
   return (
     <div>
-      {/* Show "Install App" button if the PWA is eligible for installation */}
-      {showInstallButton && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleInstallClick}
-          sx={{ m: 2 }}
-        >
-          Install App
-        </Button>
-      )}
+      {/* Always show the install button */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleInstallClick}
+        style={{ position: 'fixed', bottom: '16px', right: '16px' }} // Fixed position
+      >
+        Install App
+      </Button>
 
       {/* Custom popup to confirm app installation */}
-      <Dialog open={openPopup} onClose={handleClosePopup}>
+      <Dialog open={showPopup} onClose={handleClosePopup}>
         <DialogTitle>Install App</DialogTitle>
         <DialogContent>
           <Typography variant="body1">Do you want to install this app?</Typography>

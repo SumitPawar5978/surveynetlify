@@ -85,7 +85,7 @@ const Language = () => {
           </Button>
         </Box>
         <Box mt={4}>
-          <PwaInstallPopup /> {/* Render the PWA Install Button */}
+          <PwaInstallPopup /> 
         </Box>
       </Box>
     </>
