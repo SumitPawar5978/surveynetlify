@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { Box, Typography, Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import { useSelector } from "react-redux";
 import { submitTestQuestion } from "../../utils/axios";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { routePath } from "../../constants/routePath";
 
 
 const ExamPage = () => {
+  const navigate=useNavigate()
   const questionCollection = useSelector((state) => state.reducer.questionCollection);
   const requestData = useSelector((state) => state.reducer.requestData);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -16,11 +20,35 @@ let questions=questionCollection?.questionsResultDetail;
     setSelectedValue(event.target.value);
   };
 
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
   const submitAnswers = async (answerObject) => {
     try {
       setIsSubmitting(true);
       const response = await submitTestQuestion(answerObject);
       console.log("Submission Successful:", response.data);
+      if (response.data.status === "success") {
+      Toast.fire({
+        icon: "success",
+        title: response.data.message,
+      });
+      navigate(routePath.HOME)
+    }else{
+      Toast.fire({
+        icon: "error",
+        title: response.data.message,
+      });
+    }
       // Handle success, like showing a success message or navigating to a thank you page
     } catch (error) {
       console.error("Error submitting answers:", error);
@@ -77,7 +105,7 @@ let questions=questionCollection?.questionsResultDetail;
     <Box sx={{ backgroundColor: "#E5F9FF", height: "100vh", padding: "0px 20px" }}>
       <Box sx={{ padding: "12px", borderRadius: "5px", background: "#fff", marginBottom: "10px" }}>
         <Typography variant="h3" sx={{ fontWeight: "700", fontSize: "17px", color: "#222222CC" }}>
-          Survey Code: <Box component="span" sx={{ color: "#F84D01" }}>123 456 456</Box>
+          Survey Code: <Box component="span" sx={{ color: "#F84D01" }}>  {requestData.surveyCode}</Box>
         </Typography>
       </Box>
 

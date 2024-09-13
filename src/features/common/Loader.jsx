@@ -8,8 +8,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { setQuestionCollection } from "../../app/reducer";
 import { ref, set, onValue } from "firebase/database";
 import { db } from "../../utils/firebase";
+import Swal from "sweetalert2";
 
 const Loading = () => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -45,14 +57,20 @@ const Loading = () => {
       if (["Accept", "Reject"].includes(statusValue)) {
         if (statusValue === "Accept") {
           fetchQuestion();
-          alert("Accepted");
+          Toast.fire({
+            icon: "success",
+            title: "Request Accepted",
+          });
         } else {
           navigate(routePath.HOME);
-          alert("Rejected");
+          Toast.fire({
+            icon: "success",
+            title: "Request Rejected",
+          });
         }
       }
     });
-  }, [fetchQuestion, navigate]); // fetchQuestion and navigate as dependencies
+  }, [fetchQuestion, navigate, Toast]); // fetchQuestion and navigate as dependencies
 
   // Automatically submit request on component mount
   useEffect(() => {
@@ -85,7 +103,7 @@ const Loading = () => {
         <Box sx={{ padding: "12px", borderRadius: "5px", background: "#fff" }}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h3" sx={{ fontWeight: "700", fontSize: "17px", color: "#222222CC" }}>
-              Survey Code:{" "}
+              Head Code:{" "}
               <Box component="span" sx={{ color: "#F84D01" }}>
                 {requestData.surveyCode}
               </Box>

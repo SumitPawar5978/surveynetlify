@@ -10,7 +10,20 @@ import { getUserRequest, updateUserTestRequestStatus } from '../../utils/axios';
 import { db } from "../../utils/firebase";
 import { onValue, ref, update } from "firebase/database";
 import { setRequestData } from '../../app/reducer';
+import Swal from 'sweetalert2';
 const TestRequest = () => {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+    
     const selectedHeadCode = useSelector((state) => state.reducer.selectedHeadCode);
     const requestData = useSelector(
         (state) => state.reducer.requestData
@@ -18,7 +31,7 @@ const TestRequest = () => {
 
       const [requestEntries, setRequest] = useState([])
       const dispatch=useDispatch()
-      
+      const [updateTestReq, seUpdateTestReq] = useState({})
       const [requests, setRequests] = useState([]);
       
       const filteredData = requests.filter(item => item.surveyCode.trim() === selectedHeadCode);
@@ -59,7 +72,7 @@ const TestRequest = () => {
               }
         }  
         handleGetRequest()
-    }, [requests,selectedHeadCode])
+    }, [requests,selectedHeadCode,updateTestReq])
     
     const handleApproval = (userId, result_id, isApproved) => {
         const status = isApproved ? 'Accept' : 'Reject';
@@ -78,6 +91,11 @@ const TestRequest = () => {
         try {
             let res = await updateUserTestRequestStatus({result_id:result_id,status:status});
             console.log(res.data,'ressssssss');
+            seUpdateTestReq(res.data)
+            Toast.fire({
+                icon: "success",
+                title: res.data.message,
+              });
         } catch (error) {
             console.error("Failed to fetch states:", error);
         }

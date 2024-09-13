@@ -47,31 +47,49 @@ const Registration = () => {
   const validate = () => {
     let tempErrors = {};
     let isValid = true;
-  
-    // Validate required fields
+    const mandatoryFields = ['firstName', 'middleName', 'lastName', 'email', 'mobileNumber', 'password', 'confirmPassword'];
+    // Check if more than one field is empty
+    const emptyFields = mandatoryFields.filter(field => !formData[field]);
+    if (emptyFields.length > 1) {
+      Toast.fire({
+        icon: "error",
+        title: "Please fill all mandatory fields.",
+      });
+      return false;
+    }
+    // Validate first name
     if (!formData.firstName) {
       tempErrors.firstName = 'First name is required.';
       isValid = false;
+    } else if (!/^[A-Z]/.test(formData.firstName)) {
+      tempErrors.firstName = 'First name must start with a capital letter.';
+      isValid = false;
     }
-  
+    // Validate middle name
     if (!formData.middleName) {
       tempErrors.middleName = 'Middle name is required.';
       isValid = false;
+    } else if (!/^[A-Z]/.test(formData.middleName)) {
+      tempErrors.middleName = 'Middle name must start with a capital letter.';
+      isValid = false;
     }
-  
+    // Validate last name
     if (!formData.lastName) {
       tempErrors.lastName = 'Last name is required.';
       isValid = false;
+    } else if (!/^[A-Z]/.test(formData.lastName)) {
+      tempErrors.lastName = 'Last name must start with a capital letter.';
+      isValid = false;
     }
-  
+    // Validate email
     if (!formData.email) {
       tempErrors.email = 'Email is required.';
       isValid = false;
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
+    } else if (formData.email && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
       tempErrors.email = 'Enter a valid email address.';
       isValid = false;
     }
-  
+    // Validate mobile number
     if (!formData.mobileNumber) {
       tempErrors.mobileNumber = 'Mobile number is required.';
       isValid = false;
@@ -79,7 +97,7 @@ const Registration = () => {
       tempErrors.mobileNumber = 'Enter a valid 10-digit mobile number.';
       isValid = false;
     }
-  
+    // Validate password
     if (!formData.password) {
       tempErrors.password = 'Password is required.';
       isValid = false;
@@ -87,7 +105,7 @@ const Registration = () => {
       tempErrors.password = 'Password must be at least 6 characters long.';
       isValid = false;
     }
-  
+    // Validate confirm password
     if (!formData.confirmPassword) {
       tempErrors.confirmPassword = 'Confirm Password is required.';
       isValid = false;
@@ -95,37 +113,16 @@ const Registration = () => {
       tempErrors.confirmPassword = 'Passwords do not match.';
       isValid = false;
     }
-  
-    // Capitalization validation for first, middle, and last names
-    if (formData.firstName && formData.firstName[0] !== formData.firstName[0].toUpperCase()) {
-      tempErrors.firstName = 'First letter of First Name should be capitalized.';
-      isValid = false;
-    }
-  
-    if (formData.middleName && formData.middleName[0] !== formData.middleName[0].toUpperCase()) {
-      tempErrors.middleName = 'First letter of Middle Name should be capitalized.';
-      isValid = false;
-    }
-  
-    if (formData.lastName && formData.lastName[0] !== formData.lastName[0].toUpperCase()) {
-      tempErrors.lastName = 'First letter of Last Name should be capitalized.';
-      isValid = false;
-    }
-  
     setErrors(tempErrors);
-  
-    if (!isValid) {
-      if (Object.keys(tempErrors).length > 0) {
-        Toast.fire({
-          icon: "error",
-          title: Object.values(tempErrors).join(' '),
-        });
-      }
+    // Show Toast for first error message, if applicable
+    if (!isValid && Object.values(tempErrors).length > 0) {
+      Toast.fire({
+        icon: "error",
+        title: Object.values(tempErrors)[0], // Show the first error
+      });
     }
-  
     return isValid;
   };
-  
   
   
   
@@ -150,6 +147,7 @@ const Registration = () => {
         const res = await sendOtp({
           email_id: formData.email,
           mobile_no: formData.mobileNumber,
+          first_name:formData.firstName
         });
   
         localStorage.setItem("registrationEMail", formData.email);
@@ -295,7 +293,7 @@ const Registration = () => {
             onChange={handleChange}
           >
             <FormControlLabel value="Medical Students" control={<CustomRadio />} label="Medical Students" />
-            <FormControlLabel value="School / Children" control={<CustomRadio />} label="School / Children" />
+            <FormControlLabel value="School/Children" control={<CustomRadio />} label="School / Children" />
             <FormControlLabel value="Other" control={<CustomRadio />} label="Other" />
           </RadioGroup>
         </FormControl>

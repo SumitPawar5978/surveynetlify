@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectedLanguage } from "../../app/reducer";
 import LanguageIcon from "../../assets/image/language-icon.svg";
 import BackIcon from "../../assets/image/back-icon.svg";
+import NavIcon from "../../assets/image/navIcon.png";
 import accountIcon from "../../assets/image/account-icon.svg";
 import accountEdit from "../../assets/image/account-edit.svg";
 import calendarIcon from "../../assets/image/calendar-icon.svg";
@@ -11,12 +12,18 @@ import { logout } from "../../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { routePath } from "../../constants/routePath";
 import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const { first_name, middle_name, last_name } = useSelector(
     (state) => state.reducer.userDetails
   );
+  const isHead = useSelector(
+    (state) => state.reducer.isHead
+  );
+
+  console.log(isHead)
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElLogout, setAnchorElLogout] = React.useState(null);
@@ -67,6 +74,9 @@ const Navbar = () => {
     today.getMonth() + 1
   ).padStart(2, "0")}/${today.getFullYear()}`;
 
+  const location = useLocation();
+  const isHomePath = location.pathname === "/home";
+
   return (
     <>
       <Box
@@ -80,17 +90,28 @@ const Navbar = () => {
       >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton sx={{ padding: 0 }}>
-              <Box
-                component="img"
-                src={BackIcon}
-                onClick={() => {
-                  navigate(-1)
-                }}
-                alt="Logo"
-                sx={{ height: 22, width: 22, mr: "15px" }}
-              />
-            </IconButton>
+            {
+              isHead && !isHomePath  ? (
+                <IconButton sx={{ padding: 0 }} onClick={() => navigate(-1)}>
+                  <Box
+                    component="img"
+                    src={BackIcon}
+                    alt="Back Icon"
+                    sx={{ height: 22, width: 22, mr: "15px" }}
+                  />
+                </IconButton>
+              ):
+              (
+                <IconButton sx={{ padding: 0 }} >
+                  <Box
+                    component="img"
+                    src={NavIcon}
+                    alt="Back Icon"
+                    sx={{ mr: "15px" }}
+                  />
+                </IconButton>
+              )
+            }
             <Typography
               variant="h3"
               sx={{ fontWeight: "700", fontSize: "22px", color: "#F84D01" }}
