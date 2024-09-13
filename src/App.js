@@ -4,6 +4,7 @@ import Splash from "./features/common/Splash";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { routes } from "./constants/routes";
 import Navbar from "./features/common/Navbar";
+import PwaInstallPopup from "./features/PwaInstallPopup";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -59,6 +60,7 @@ function App() {
           <Route key={index} path={route.path} element={route.component} />
         ))}
       </Routes>
+      <PwaInstallPopup/>
     </>
   );
 }

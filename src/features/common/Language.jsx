@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { routePath } from "../../constants/routePath";
 import { useDispatch } from "react-redux";
 import { setSelectedLanguage } from "../../app/reducer";
+import PwaInstallPopup from "../PwaInstallPopup";
+
 const Language = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -81,6 +83,9 @@ const Language = () => {
           >
             मराठी
           </Button>
+        </Box>
+        <Box mt={4}>
+          <PwaInstallPopup /> {/* Render the PWA Install Button */}
         </Box>
       </Box>
     </>
